@@ -1,4 +1,4 @@
-package lab1.LZW;
+package lab1;
 
 // The BitOutputStream and BitInputStream classes provide the ability to
 // write and read individual bits to a file in a compact form.  One major
