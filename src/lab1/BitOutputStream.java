@@ -1,4 +1,4 @@
-package lab1.LZW;
+package lab1;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
