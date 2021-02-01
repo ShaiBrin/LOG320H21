@@ -32,7 +32,6 @@ public class Huffman {
         System.out.println(fileInByteArray.length * 8);
         // 2. Build frequency table
         Map<Byte, Integer> sortedFrequencyTable = createFrequencyTable(fileInByteArray);
-
         // 3. Build Huffman Tree
         buildTree(sortedFrequencyTable);
         setPrefixCodes(bytePrefixHashMap, root, new StringBuilder());
@@ -76,12 +75,51 @@ public class Huffman {
         String stringBytes = (String) in2.readObject();
 
         // Build the tree
-        buildTree(frequencyMap);
+        HuffmanNode root2 = buildTree2(frequencyMap);
+        HuffmanNode originalTree = root2;
 
         // TODO: Use tree and decompress stringBytes (la variable c'est root)
+//        ArrayList<Byte> arrayByte = new ArrayList<Byte>();
+//        for(int i = 0; i < stringBytes.length(); i++) {
+//            if(stringBytes.charAt(i) == '0') { //00001101011010101010101010
+//                 root2 = root2.left;
+//            } else {
+//                 root2 = root2.right;
+//            }
+//            //Verify if node is a leaf. If node has no children then its a leaf
+//            if(root2.left == null && root2.right == null){
+//                arrayByte.add(root2.data);
+//                root2 = originalTree;
+//            }
+//        }
+        // TODO: Use tree and decompress stringBytes (la variable c'est root)
+        ArrayList<Byte> arrayByte = new ArrayList<Byte>();
+        HuffmanNode temps = originalTree;
+        for(int i = 0; i < stringBytes.length(); i++) {
+            int bit = Character.getNumericValue(stringBytes.charAt(i));
+            System.out.println(bit);
+            if(bit == 0) {
+                temps = temps.left;
+                if(temps.right == null && temps.left == null) {
+                    if(temps.data != (byte) 0) {
+                        arrayByte.add(temps.data);
+                        temps = originalTree;
+                    }
+                }
+            }
+            if(bit == 1) {
+                temps = temps.right;
+                if(temps.right == null && temps.left == null) {
+                    if(temps.data != (byte) 0) {
+                        arrayByte.add(temps.data);
+                        temps = originalTree;
+                    }
+                }
+            }
 
-
-        // TODO: write the file to fileOutputPath
+        }
+//        // TODO: write the file to fileOutputPath
+        Files.write(new File(fileOutputPath).toPath(), buildByteArray(arrayByte));
     }
 
     //https://examples.javacodegeeks.com/core-java/io/file/how-to-read-an-object-from-file-in-java/
@@ -180,6 +218,46 @@ public class Huffman {
         }
     }
 
+    private static HuffmanNode buildTree2(Map<Byte, Integer> sortedFrequencyTable){
+        int n = sortedFrequencyTable.size();
+        HuffmanNode rootNode = null;
+        PriorityQueue<HuffmanNode> q
+                = new PriorityQueue<HuffmanNode>(n, new MyComparator());
+
+        for(Byte key: sortedFrequencyTable.keySet()){
+
+            HuffmanNode hn = new HuffmanNode();
+
+            hn.data = key;
+            hn.frequency = sortedFrequencyTable.get(key);
+
+            hn.left = null;
+            hn.right = null;
+
+            q.add(hn);
+        }
+
+        root = null;
+
+        while (q.size() > 1) {
+
+            HuffmanNode x = q.peek();
+            q.poll();
+            HuffmanNode y = q.peek();
+            q.poll();
+
+            HuffmanNode f = new HuffmanNode();
+
+            f.frequency = x.frequency + y.frequency;
+            f.data = '-';
+            f.left = x;
+            f.right = y;
+            rootNode = f;
+            q.add(f);
+        }
+        return rootNode;
+    }
+
     // Used : https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
     private static void setPrefixCodes(Map<Byte, String> bytePrefixHashMap, HuffmanNode node, StringBuilder prefix) {
 
@@ -227,6 +305,16 @@ public class Huffman {
         return ints;
     }
 
+    //https://stackoverflow.com/questions/718554/how-to-convert-an-arraylist-containing-integers-to-primitive-int-array
+    private static byte[] buildByteArray(ArrayList<Byte> integers) {
+        byte[] bytes = new byte[integers.size()];
+        int i = 0;
+        for (Byte n : integers) {
+            bytes[i++] = n;
+        }
+        return bytes;
+    }
+
     // Used : https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
     private static Map<Byte, Integer> createFrequencyTable(byte[] array) throws FileNotFoundException,IOException
     {
@@ -250,5 +338,15 @@ public class Huffman {
     // Used : https://stackoverflow.com/questions/15217438/counting-occurrences-of-a-key-in-a-map-in-java
     private static <K> void count(K key, Map<K, Integer> map) {
         map.merge(key, 1, (currentCount, notUsed) -> ++currentCount);
+    }
+
+    //Determine si le noeud present est une feuille
+    //@param: un noeud
+    //@return: vrai si c'est une feuille
+    private static boolean checkLeaf(HuffmanNode node) {
+        if(node.left == null && node.right == null) {
+            return true;
+        };
+        return false;
     }
 }
