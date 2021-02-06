@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 // 1. Read input file
 // 2. Build Huffman Tree
 // 3. Decode BITS
-
+// 4. Output file
 
 public class Huffman {
     static HuffmanNode root;
@@ -29,17 +29,21 @@ public class Huffman {
 
         //// 1. Read input File
         byte[] fileInByteArray = Files.readAllBytes(Paths.get(filePath));
-        System.out.println(fileInByteArray.length * 8);
+
         // 2. Build frequency table
         Map<Byte, Integer> sortedFrequencyTable = createFrequencyTable(fileInByteArray);
+        System.out.println(sortedFrequencyTable);
         // 3. Build Huffman Tree
         buildTree(sortedFrequencyTable);
         setPrefixCodes(bytePrefixHashMap, root, new StringBuilder());
         // 4. Encode Huffman Root and Huffman BITS
+        System.out.println(bytePrefixHashMap);
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < fileInByteArray.length; i++) {
             s.append(bytePrefixHashMap.get(fileInByteArray[i]));
         }
+        System.out.println(s.toString());
+
 
         ArrayList<Integer> bits = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
@@ -55,7 +59,7 @@ public class Huffman {
         // Convert byteString to Bytes
         ByteArrayOutputStream byteOut2 = new ByteArrayOutputStream();
         ObjectOutputStream out2 = new ObjectOutputStream(byteOut2);
-        out2.writeObject(sb.toString());
+        out2.writeObject(s.toString());
         byteList.add(byteOut2.toByteArray());
 
         // Write encoded File
@@ -68,16 +72,23 @@ public class Huffman {
         ByteArrayInputStream byteIn = new ByteArrayInputStream(byteList.get(0));
         ObjectInputStream in = new ObjectInputStream(byteIn);
         Map<Byte, Integer> frequencyMap = (Map<Byte, Integer>) in.readObject();
-
+        System.out.println(frequencyMap);
 
         ByteArrayInputStream byteIn2 = new ByteArrayInputStream(byteList.get(1));
         ObjectInputStream in2 = new ObjectInputStream(byteIn2);
         String stringBytes = (String) in2.readObject();
 
-        // Build the tree
+        // Build the tree (root)
         HuffmanNode root2 = buildTree2(frequencyMap);
         HuffmanNode originalTree = root2;
 
+        BitSet bitset = new BitSet(stringBytes.length());
+        for(int i = 0; i < stringBytes.length(); i++) {
+
+                if(Character.getNumericValue(stringBytes.charAt(i)) == 1){
+                    bitset.set(i);
+                }
+        }
         // TODO: Use tree and decompress stringBytes (la variable c'est root)
 //        ArrayList<Byte> arrayByte = new ArrayList<Byte>();
 //        for(int i = 0; i < stringBytes.length(); i++) {
@@ -92,32 +103,30 @@ public class Huffman {
 //                root2 = originalTree;
 //            }
 //        }
+
         // TODO: Use tree and decompress stringBytes (la variable c'est root)
         ArrayList<Byte> arrayByte = new ArrayList<Byte>();
         HuffmanNode temps = originalTree;
         for(int i = 0; i < stringBytes.length(); i++) {
-            int bit = Character.getNumericValue(stringBytes.charAt(i));
-            System.out.println(bit);
+//            int bit = Character.getNumericValue(stringBytes.charAt(i));
+            int bit = bitset.get(i) ? 1 : 0;
+
             if(bit == 0) {
                 temps = temps.left;
-                if(temps.right == null && temps.left == null) {
-                    if(temps.data != (byte) 0) {
-                        arrayByte.add(temps.data);
-                        temps = originalTree;
-                    }
-                }
             }
-            if(bit == 1) {
+            else{
                 temps = temps.right;
-                if(temps.right == null && temps.left == null) {
-                    if(temps.data != (byte) 0) {
-                        arrayByte.add(temps.data);
-                        temps = originalTree;
-                    }
-                }
             }
 
+            if(temps.right == null && temps.left == null) {
+                arrayByte.add(temps.data);
+                System.out.println(temps.data);
+                temps = originalTree;
+            }
+
+
         }
+        System.out.println(arrayByte);
 //        // TODO: write the file to fileOutputPath
         Files.write(new File(fileOutputPath).toPath(), buildByteArray(arrayByte));
     }
