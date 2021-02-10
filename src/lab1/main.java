@@ -33,10 +33,16 @@ public class main {
                 lzw.encode(inputFile, outputFile);
 
             } else if (args[0].equals("-opt") && args[1].equals("-d")) {
+                System.out.println("Decompressing opt file");
+                OptimizedAlgo opt = new OptimizedAlgo();
+                opt.decode(input, output);
 
             } else if (args[0].equals("-opt") && args[1].equals("-c")) {
-
+                System.out.println("Compressing opt file");
+                OptimizedAlgo opt = new OptimizedAlgo();
+                opt.encode(input,output);
             }
+            
         } catch (Exception ex) {
             System.out.println(ex.toString());
         }
