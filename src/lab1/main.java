@@ -16,16 +16,23 @@ public class main {
             if (args[0].equals("-huff") && args[1].equals("-d")) {
                 System.out.println("Decompressing huffman file");
                 Huffman.decode(inputFile, outputFile);
-            } else if (args[0].equals("-lzw") && args[1].equals("-d")) {
-
-            } else if (args[0].equals("-opt") && args[1].equals("-d")) {
-
+                
             } else if (args[0].equals("-huff") && args[1].equals("-c")) {
                 System.out.println("Compressing huffman file");
                 Huffman.encode(inputFile, outputFile);
 
 
+            } else if (args[0].equals("-lzw") && args[1].equals("-d")) {
+                System.out.println("Decompressing lzw file");
+                LZW lzw = new LZW();
+                lzw.decode(inputFile, outputFile);
+            
             } else if (args[0].equals("-lzw") && args[1].equals("-c")) {
+                System.out.println("Compressing lzw file");
+                LZW lzw = new LZW();
+                lzw.encode(inputFile, outputFile);
+
+            } else if (args[0].equals("-opt") && args[1].equals("-d")) {
 
             } else if (args[0].equals("-opt") && args[1].equals("-c")) {
 
