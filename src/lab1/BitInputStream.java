@@ -1,5 +1,13 @@
 package lab1;
 
+/*
+  CODE EMPRUNTÉE :
+   Les lignes suivantes sont basées sur une classe provenant du site :
+       https://courses.cs.washington.edu/courses/cse143/12sp/homework/ass8/BitInputStream.java
+   (consultée le 20 janvier 2021)
+*/
+
+
 // The BitOutputStream and BitInputStream classes provide the ability to
 // write and read individual bits to a file in a compact form.  One major
 // limitation of this approach is that the resulting file will always have
@@ -74,3 +82,5 @@ public class BitInputStream {
         close();
     }
 }
+
+/*FIN DU CODE EMPRUNTÉE*/

@@ -1,6 +1,8 @@
 package lab1;
 
 import lab1.Huffman.Huffman;
+import lab1.LZW.LZW;
+import lab1.Optimized.OptimizedAlgo;
 
 public class main {
     static String inputFile;

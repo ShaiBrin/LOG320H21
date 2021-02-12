@@ -89,22 +89,8 @@ public class Huffman {
                     bitset.set(i);
                 }
         }
-        // TODO: Use tree and decompress stringBytes (la variable c'est root)
-//        ArrayList<Byte> arrayByte = new ArrayList<Byte>();
-//        for(int i = 0; i < stringBytes.length(); i++) {
-//            if(stringBytes.charAt(i) == '0') { //00001101011010101010101010
-//                 root2 = root2.left;
-//            } else {
-//                 root2 = root2.right;
-//            }
-//            //Verify if node is a leaf. If node has no children then its a leaf
-//            if(root2.left == null && root2.right == null){
-//                arrayByte.add(root2.data);
-//                root2 = originalTree;
-//            }
-//        }
 
-        // TODO: Use tree and decompress stringBytes (la variable c'est root)
+
         ArrayList<Byte> arrayByte = new ArrayList<Byte>();
         HuffmanNode temps = originalTree;
         for(int i = 0; i < stringBytes.length(); i++) {
@@ -127,7 +113,7 @@ public class Huffman {
 
         }
         System.out.println(arrayByte);
-//        // TODO: write the file to fileOutputPath
+
         Files.write(new File(fileOutputPath).toPath(), buildByteArray(arrayByte));
     }
 
@@ -266,8 +252,15 @@ public class Huffman {
         }
         return rootNode;
     }
-
-    // Used : https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
+    /*
+      CODE EMPRUNTÉE :
+       Les lignes suivantes sont basées sur une classe provenant du site :
+           https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
+       (consultée le 20 janvier 2021)
+       Ceci n'est pas un code emprunté au complet. Certains ajustement ont été faite
+       Nous avons adaptée ce code a notre utilisation.
+       Assigner un prefix de code a un caractere. Important pour la construction de l'arbre de Huffman.
+    */
     private static void setPrefixCodes(Map<Byte, String> bytePrefixHashMap, HuffmanNode node, StringBuilder prefix) {
 
         if (node != null) {
@@ -285,6 +278,7 @@ public class Huffman {
             }
         }
     }
+    /* FIN DU CODE EMPRUNTÉ */
 
     private static int[] readFileToByte(String filePath, int byteSize){
         BitInputStream bitInputStream = new BitInputStream(filePath, byteSize);
@@ -304,7 +298,14 @@ public class Huffman {
 
     }
 
-    //https://stackoverflow.com/questions/718554/how-to-convert-an-arraylist-containing-integers-to-primitive-int-array
+    /*
+      CODE EMPRUNTÉE :
+       Les lignes suivantes sont basées sur une classe provenant du site :
+           https://stackoverflow.com/questions/718554/how-to-convert-an-arraylist-containing-integers-to-primitive-int-array
+       (consultée le 20 janvier 2021)
+       Conversion d'une ArrayList en type Integer.
+       @return tableau en Integer
+    */
     private static int[] buildIntArray(ArrayList<Integer> integers) {
         int[] ints = new int[integers.size()];
         int i = 0;
@@ -313,8 +314,17 @@ public class Huffman {
         }
         return ints;
     }
+    /* FIN DU CODE EMPRUNTÉ */
 
-    //https://stackoverflow.com/questions/718554/how-to-convert-an-arraylist-containing-integers-to-primitive-int-array
+    /*
+      CODE EMPRUNTÉE :
+       Les lignes suivantes sont basées sur une classe provenant du site :
+           https://stackoverflow.com/questions/718554/how-to-convert-an-arraylist-containing-integers-to-primitive-int-array
+       (consultée le 20 janvier 2021)
+       Cette version du code empreinter est adapter a notre implementation
+       Conversion d'une ArrayList en type Byte.
+       @return tableau en Byte
+    */
     private static byte[] buildByteArray(ArrayList<Byte> integers) {
         byte[] bytes = new byte[integers.size()];
         int i = 0;
@@ -323,8 +333,16 @@ public class Huffman {
         }
         return bytes;
     }
+    /* FIN DU CODE EMPRUNTÉ */
 
-    // Used : https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
+    /*
+      CODE EMPRUNTÉE :
+       Les lignes suivantes sont basées sur une classe provenant du site :
+           https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
+       (consultée le 20 janvier 2021)
+        Création de la table de fréquence pour l'algorithme de Huffman
+        Génération des occurences de chacune des caracteres dans le fichier a compresser
+    */
     private static Map<Byte, Integer> createFrequencyTable(byte[] array) throws FileNotFoundException,IOException
     {
         Map<Byte, Integer> sortedFrequencyTable = createMapFromBytes(array).entrySet().stream()
@@ -333,6 +351,8 @@ public class Huffman {
 
         return sortedFrequencyTable;
     }
+    /* FIN DU CODE EMPRUNTÉ */
+
 
     private static Map<Byte, Integer> createMapFromBytes(byte[] array) throws FileNotFoundException,IOException
     {
@@ -344,18 +364,15 @@ public class Huffman {
         return map;
     }
 
-    // Used : https://stackoverflow.com/questions/15217438/counting-occurrences-of-a-key-in-a-map-in-java
+    /*
+      CODE EMPRUNTÉE :
+       Les lignes suivantes sont basées sur une classe provenant du site :
+           https://stackoverflow.com/questions/15217438/counting-occurrences-of-a-key-in-a-map-in-java
+       (consultée le 20 janvier 2021)
+        Permert de savoir le nombre d'occurence d'une clé dans une structure de donnée MAP
+    */
     private static <K> void count(K key, Map<K, Integer> map) {
         map.merge(key, 1, (currentCount, notUsed) -> ++currentCount);
     }
-
-    //Determine si le noeud present est une feuille
-    //@param: un noeud
-    //@return: vrai si c'est une feuille
-    private static boolean checkLeaf(HuffmanNode node) {
-        if(node.left == null && node.right == null) {
-            return true;
-        };
-        return false;
-    }
+    /* FIN DU CODE EMPRUNTÉ */
 }

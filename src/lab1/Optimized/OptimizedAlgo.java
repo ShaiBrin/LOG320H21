@@ -1,11 +1,9 @@
 package lab1.Optimized;
 
 import lab1.BitOutputStream;
-import lab1.BitIntputStream;
+import lab1.BitInputStream;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,5 +1,12 @@
 package lab1;
 
+/*
+  CODE EMPRUNTÉE :
+   Les lignes suivantes sont basées sur une classe provenant du site :
+       https://courses.cs.washington.edu/courses/cse143/12sp/homework/ass8/BitInputStream.java
+   (consultée le 20 janvier 2021)
+*/
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -78,3 +85,5 @@ public class BitOutputStream {
         close();
     }
 }
+
+/* FIN DU CODE EMPRUNTÉ */
