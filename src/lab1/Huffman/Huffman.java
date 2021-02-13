@@ -7,47 +7,32 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// 1. Read input File
-// 2. Build frequency table
-// 3. Build Huffman Tree
-// 4. Encode Huffman Root and Huffman BITS
-// 5. Output file
-
-
-
-// 1. Read input file
-// 2. Build Huffman Tree
-// 3. Decode BITS
-// 4. Output file
 
 public class Huffman {
     static HuffmanNode root;
 
-    public static void encode(String filePath, String outputFilePath) throws IOException, ClassNotFoundException {
+    public static void encode(String filePath, String outputFilePath) throws IOException {
         Map<Byte, String> bytePrefixHashMap = new HashMap<>();
 
 
-        //// 1. Read input File
+        // 1. Read input File
         byte[] fileInByteArray = Files.readAllBytes(Paths.get(filePath));
 
         // 2. Build frequency table
-        Map<Byte, Integer> sortedFrequencyTable = createFrequencyTable(fileInByteArray);
-        System.out.println(sortedFrequencyTable);
+        Map<Byte, Integer> sortedFrequencyTable = buildSortedFrequencyTable(fileInByteArray);
         // 3. Build Huffman Tree
-        buildTree(sortedFrequencyTable);
-        setPrefixCodes(bytePrefixHashMap, root, new StringBuilder());
+        buildHuffmanTree(sortedFrequencyTable);
+        buildPrefixCodesHashMap(bytePrefixHashMap, root, new StringBuilder());
         // 4. Encode Huffman Root and Huffman BITS
-        System.out.println(bytePrefixHashMap);
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < fileInByteArray.length; i++) {
             s.append(bytePrefixHashMap.get(fileInByteArray[i]));
         }
-        System.out.println(s.toString());
 
 
         ArrayList<Integer> bits = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        EncodeNode(root, bits, sb);
+        EncodeRootNode(root, bits, sb);
 
         List<byte[]> byteList = new ArrayList<>();
         // Convert FrequencyMap to Bytes
@@ -72,14 +57,13 @@ public class Huffman {
         ByteArrayInputStream byteIn = new ByteArrayInputStream(byteList.get(0));
         ObjectInputStream in = new ObjectInputStream(byteIn);
         Map<Byte, Integer> frequencyMap = (Map<Byte, Integer>) in.readObject();
-        System.out.println(frequencyMap);
 
         ByteArrayInputStream byteIn2 = new ByteArrayInputStream(byteList.get(1));
         ObjectInputStream in2 = new ObjectInputStream(byteIn2);
         String stringBytes = (String) in2.readObject();
 
         // Build the tree (root)
-        HuffmanNode root2 = buildTree2(frequencyMap);
+        HuffmanNode root2 = buildHuffmanTree(frequencyMap);
         HuffmanNode originalTree = root2;
 
         BitSet bitset = new BitSet(stringBytes.length());
@@ -91,10 +75,9 @@ public class Huffman {
         }
 
 
-        ArrayList<Byte> arrayByte = new ArrayList<Byte>();
+        ArrayList<Byte> arrayByte = new ArrayList<>();
         HuffmanNode temps = originalTree;
         for(int i = 0; i < stringBytes.length(); i++) {
-//            int bit = Character.getNumericValue(stringBytes.charAt(i));
             int bit = bitset.get(i) ? 1 : 0;
 
             if(bit == 0) {
@@ -106,14 +89,11 @@ public class Huffman {
 
             if(temps.right == null && temps.left == null) {
                 arrayByte.add(temps.data);
-                System.out.println(temps.data);
                 temps = originalTree;
             }
 
 
         }
-        System.out.println(arrayByte);
-
         Files.write(new File(fileOutputPath).toPath(), buildByteArray(arrayByte));
     }
 
@@ -137,7 +117,7 @@ public class Huffman {
         }
     }
 
-    //javacodegeeks
+    //https://examples.javacodegeeks.com/core-java/io/file/how-to-read-an-object-from-file-in-java/
     public static void WriteObjectToFile(Object serObj, String outputFilePath) {
 
         try {
@@ -153,7 +133,7 @@ public class Huffman {
         }
     }
 
-    private static void EncodeNode(HuffmanNode node, ArrayList<Integer> bits, StringBuilder sb){
+    private static void EncodeRootNode(HuffmanNode node, ArrayList<Integer> bits, StringBuilder sb){
 
         if(node.left == null){
             bits.add(1);
@@ -167,14 +147,14 @@ public class Huffman {
         else{
             bits.add(0);
             sb.append(0);
-            EncodeNode(node.left, bits, sb);
-            EncodeNode(node.right, bits, sb);
+            EncodeRootNode(node.left, bits, sb);
+            EncodeRootNode(node.right, bits, sb);
         }
     }
 
 
     // Used : https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
-    private static void buildTree(Map<Byte, Integer> sortedFrequencyTable){
+    private static HuffmanNode buildHuffmanTree(Map<Byte, Integer> sortedFrequencyTable){
         int n = sortedFrequencyTable.size();
 
         PriorityQueue<HuffmanNode> q
@@ -211,47 +191,10 @@ public class Huffman {
             root = f;
             q.add(f);
         }
+
+        return root;
     }
 
-    private static HuffmanNode buildTree2(Map<Byte, Integer> sortedFrequencyTable){
-        int n = sortedFrequencyTable.size();
-        HuffmanNode rootNode = null;
-        PriorityQueue<HuffmanNode> q
-                = new PriorityQueue<HuffmanNode>(n, new MyComparator());
-
-        for(Byte key: sortedFrequencyTable.keySet()){
-
-            HuffmanNode hn = new HuffmanNode();
-
-            hn.data = key;
-            hn.frequency = sortedFrequencyTable.get(key);
-
-            hn.left = null;
-            hn.right = null;
-
-            q.add(hn);
-        }
-
-        root = null;
-
-        while (q.size() > 1) {
-
-            HuffmanNode x = q.peek();
-            q.poll();
-            HuffmanNode y = q.peek();
-            q.poll();
-
-            HuffmanNode f = new HuffmanNode();
-
-            f.frequency = x.frequency + y.frequency;
-            f.data = '-';
-            f.left = x;
-            f.right = y;
-            rootNode = f;
-            q.add(f);
-        }
-        return rootNode;
-    }
     /*
       CODE EMPRUNTÉE :
        Les lignes suivantes sont basées sur une classe provenant du site :
@@ -261,7 +204,7 @@ public class Huffman {
        Nous avons adaptée ce code a notre utilisation.
        Assigner un prefix de code a un caractere. Important pour la construction de l'arbre de Huffman.
     */
-    private static void setPrefixCodes(Map<Byte, String> bytePrefixHashMap, HuffmanNode node, StringBuilder prefix) {
+    private static void buildPrefixCodesHashMap(Map<Byte, String> bytePrefixHashMap, HuffmanNode node, StringBuilder prefix) {
 
         if (node != null) {
             if (node.left == null && node.right == null) {
@@ -269,50 +212,14 @@ public class Huffman {
 
             } else {
                 prefix.append('0');
-                setPrefixCodes(bytePrefixHashMap, node.left, prefix);
+                buildPrefixCodesHashMap(bytePrefixHashMap, node.left, prefix);
                 prefix.deleteCharAt(prefix.length() - 1);
 
                 prefix.append('1');
-                setPrefixCodes(bytePrefixHashMap, node.right, prefix);
+                buildPrefixCodesHashMap(bytePrefixHashMap, node.right, prefix);
                 prefix.deleteCharAt(prefix.length() - 1);
             }
         }
-    }
-    /* FIN DU CODE EMPRUNTÉ */
-
-    private static int[] readFileToByte(String filePath, int byteSize){
-        BitInputStream bitInputStream = new BitInputStream(filePath, byteSize);
-        ArrayList<Integer> arrayOfBytes = new ArrayList<>();
-
-        int currentByte = bitInputStream.readBit();
-        arrayOfBytes.add(currentByte);
-        while(currentByte != -1){
-            if(currentByte != -1){
-                currentByte = bitInputStream.readBit();
-                arrayOfBytes.add(currentByte);
-            }
-
-        }
-        System.out.println(arrayOfBytes);
-        return buildIntArray(arrayOfBytes);
-
-    }
-
-    /*
-      CODE EMPRUNTÉE :
-       Les lignes suivantes sont basées sur une classe provenant du site :
-           https://stackoverflow.com/questions/718554/how-to-convert-an-arraylist-containing-integers-to-primitive-int-array
-       (consultée le 20 janvier 2021)
-       Conversion d'une ArrayList en type Integer.
-       @return tableau en Integer
-    */
-    private static int[] buildIntArray(ArrayList<Integer> integers) {
-        int[] ints = new int[integers.size()];
-        int i = 0;
-        for (Integer n : integers) {
-            ints[i++] = n;
-        }
-        return ints;
     }
     /* FIN DU CODE EMPRUNTÉ */
 
@@ -343,7 +250,7 @@ public class Huffman {
         Création de la table de fréquence pour l'algorithme de Huffman
         Génération des occurences de chacune des caracteres dans le fichier a compresser
     */
-    private static Map<Byte, Integer> createFrequencyTable(byte[] array) throws FileNotFoundException,IOException
+    private static Map<Byte, Integer> buildSortedFrequencyTable(byte[] array) throws FileNotFoundException,IOException
     {
         Map<Byte, Integer> sortedFrequencyTable = createMapFromBytes(array).entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
