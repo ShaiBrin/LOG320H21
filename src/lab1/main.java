@@ -37,12 +37,12 @@ public class main {
             } else if (args[0].equals("-opt") && args[1].equals("-d")) {
                 System.out.println("Decompressing opt file");
                 OptimizedAlgo opt = new OptimizedAlgo();
-                opt.decode(input, output);
+                opt.decode(inputFile, outputFile);
 
             } else if (args[0].equals("-opt") && args[1].equals("-c")) {
                 System.out.println("Compressing opt file");
                 OptimizedAlgo opt = new OptimizedAlgo();
-                opt.encode(input,output);
+                opt.encode(inputFile,outputFile);
             }
             
         } catch (Exception ex) {
