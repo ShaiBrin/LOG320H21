@@ -29,11 +29,6 @@ public class Huffman {
             s.append(bytePrefixHashMap.get(fileInByteArray[i]));
         }
 
-
-        ArrayList<Integer> bits = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        EncodeRootNode(root, bits, sb);
-
         List<byte[]> byteList = new ArrayList<>();
         // Convert FrequencyMap to Bytes
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
@@ -130,25 +125,6 @@ public class Huffman {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
-    }
-
-    private static void EncodeRootNode(HuffmanNode node, ArrayList<Integer> bits, StringBuilder sb){
-
-        if(node.left == null){
-            bits.add(1);
-            sb.append(1);
-            String bitString = String.format("%8s", Integer.toBinaryString(node.data & 0xFF)).replace(' ', '0');
-            for(char c : bitString.toCharArray()) {
-                bits.add(Character.getNumericValue(c));
-                sb.append(Character.getNumericValue(c));
-            }
-        }
-        else {
-            bits.add(0);
-            sb.append(0);
-            EncodeRootNode(node.left, bits, sb);
-            EncodeRootNode(node.right, bits, sb);
         }
     }
 
