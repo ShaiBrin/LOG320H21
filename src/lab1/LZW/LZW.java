@@ -123,7 +123,7 @@ public class LZW {
                     outputStream.writeBytes(sequence);
 
                     if(symbol!=null){
-                        combined = symbol + symbol.charAt(0);
+                        combined = symbol + sequence.charAt(0);
                         dictionary.put(dictionarySize, combined);
                         dictionarySize++;
                     }

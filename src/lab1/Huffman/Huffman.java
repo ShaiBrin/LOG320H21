@@ -97,7 +97,7 @@ public class Huffman {
         Files.write(new File(fileOutputPath).toPath(), buildByteArray(arrayByte));
     }
 
-    //https://examples.javacodegeeks.com/core-java/io/file/how-to-read-an-object-from-file-in-java/
+    // https://examples.javacodegeeks.com/core-java/io/file/how-to-read-an-object-from-file-in-java/
     public static Object ReadObjectFromFile(String filepath) {
 
         try {
@@ -117,7 +117,7 @@ public class Huffman {
         }
     }
 
-    //https://examples.javacodegeeks.com/core-java/io/file/how-to-read-an-object-from-file-in-java/
+    // https://examples.javacodegeeks.com/core-java/io/file/how-to-read-an-object-from-file-in-java/
     public static void WriteObjectToFile(Object serObj, String outputFilePath) {
 
         try {
@@ -144,7 +144,7 @@ public class Huffman {
                 sb.append(Character.getNumericValue(c));
             }
         }
-        else{
+        else {
             bits.add(0);
             sb.append(0);
             EncodeRootNode(node.left, bits, sb);
