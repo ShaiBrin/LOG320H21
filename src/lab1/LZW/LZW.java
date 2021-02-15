@@ -177,8 +177,7 @@ public class LZW {
         String s = Character.toString((char) byteToInt);
         String c = "";
         String combined = "";
-        String encodedBinary = "";
-        String paddedBinary = "";
+
 
         for (int i = 1; i < data.length; i++) {
             if (dictionarySize >= MAX_DICT_SIZE) {
@@ -193,21 +192,23 @@ public class LZW {
                 s += c;
             } else {
                 // Write output s
-                writeCompressedFile(dictionary, encodedBinary, paddedBinary, s, binaryOutPutStream);
+                writeCompressedFile(dictionary, s, binaryOutPutStream);
                 dictionary.put((combined), dictionarySize);
                 dictionarySize++;
 
                 s = c;
             }
         }
-        writeCompressedFile(dictionary, encodedBinary, paddedBinary, s, binaryOutPutStream);
+        writeCompressedFile(dictionary, s, binaryOutPutStream);
         System.out.println("The file : " + inputFile + " has been compressed");
     }
 
-    private void writeCompressedFile(Map<String, Integer> dictionary, String encodedBinary, String paddedBinary, String s, BitOutputStream binaryOutPutStream){
-        encodedBinary = Integer.toBinaryString(dictionary.get(s));
-        paddedBinary = convertTo16Bit(encodedBinary);
-        writeToFile(paddedBinary, binaryOutPutStream);
+    private void writeCompressedFile(Map<String, Integer> dictionary, String s, BitOutputStream binaryOutPutStream){
+        String padding = "";
+        String encoded = "";
+        encoded = Integer.toBinaryString(dictionary.get(s));
+        padding = convertTo16Bit(encoded);
+        writeToFile(padding, binaryOutPutStream);
     }
 
     /**
