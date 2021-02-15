@@ -2,7 +2,6 @@ package lab1;
 
 import lab1.Huffman.Huffman;
 import lab1.LZW.LZW;
-import lab1.Optimized.OptimizedAlgo;
 
 public class main {
     static String inputFile;
@@ -36,13 +35,11 @@ public class main {
 
             } else if (args[0].equals("-opt") && args[1].equals("-d")) {
                 System.out.println("Decompressing opt file");
-                OptimizedAlgo opt = new OptimizedAlgo();
-                opt.decode(inputFile, outputFile);
+                Huffman.decode(inputFile, outputFile);
 
             } else if (args[0].equals("-opt") && args[1].equals("-c")) {
                 System.out.println("Compressing opt file");
-                OptimizedAlgo opt = new OptimizedAlgo();
-                opt.encode(inputFile,outputFile);
+                Huffman.encode(inputFile, outputFile);
             }
             
         } catch (Exception ex) {
