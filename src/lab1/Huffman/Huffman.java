@@ -15,22 +15,18 @@ public class Huffman {
         Map<Byte, String> bytePrefixHashMap = new HashMap<>();
 
 
-        // 1. Read input File
         byte[] fileInByteArray = Files.readAllBytes(Paths.get(filePath));
-
-        // 2. Build frequency table
         Map<Byte, Integer> sortedFrequencyTable = buildSortedFrequencyTable(fileInByteArray);
-        // 3. Build Huffman Tree
         buildHuffmanTree(sortedFrequencyTable);
         buildPrefixCodesHashMap(bytePrefixHashMap, root, new StringBuilder());
-        // 4. Encode Huffman Root and Huffman BITS
+        // Build encoded string
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < fileInByteArray.length; i++) {
             s.append(bytePrefixHashMap.get(fileInByteArray[i]));
         }
 
-        List<byte[]> byteList = new ArrayList<>();
         // Convert FrequencyMap to Bytes
+        List<byte[]> byteList = new ArrayList<>();
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         ObjectOutputStream out = new ObjectOutputStream(byteOut);
         out.writeObject(sortedFrequencyTable);
@@ -42,7 +38,6 @@ public class Huffman {
         out2.writeObject(s.toString());
         byteList.add(byteOut2.toByteArray());
 
-        // Write encoded File
         WriteObjectToFile(byteList, outputFilePath);
     }
 
@@ -57,7 +52,6 @@ public class Huffman {
         ObjectInputStream in2 = new ObjectInputStream(byteIn2);
         String stringBytes = (String) in2.readObject();
 
-        // Build the tree (root)
         HuffmanNode root2 = buildHuffmanTree(frequencyMap);
         HuffmanNode originalTree = root2;
 
