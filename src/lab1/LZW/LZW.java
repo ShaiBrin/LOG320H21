@@ -174,8 +174,8 @@ public class LZW {
         int byteToInt = byteToInt(data[0]);
 
 
-        String symbol = Character.toString((char) byteToInt);
-        String character = "";
+        String s = Character.toString((char) byteToInt);
+        String c = "";
         String combined = "";
         String encodedBinary = "";
         String paddedBinary = "";
@@ -186,29 +186,29 @@ public class LZW {
                 dictionary = initDictionary();
             }
             byteToInt = byteToInt(data[i]);
-            character = Character.toString((char) byteToInt);
-            combined = symbol + character;
+            c = Character.toString((char) byteToInt);
+            combined = s + c;
 
             if (dictionary.containsKey(combined)) {
-                symbol += character;
+                s += c;
             } else {
-                // Write output symbol
-                encodedBinary = Integer.toBinaryString(dictionary.get(symbol));
-                paddedBinary = convertTo16Bit(encodedBinary);
-                writeToFile(paddedBinary, binaryOutPutStream);
-
+                // Write output s
+                writeCompressedFile(dictionary, encodedBinary, paddedBinary, s, binaryOutPutStream);
                 dictionary.put((combined), dictionarySize);
                 dictionarySize++;
 
-                symbol = character;
+                s = c;
             }
         }
-        encodedBinary = Integer.toBinaryString(dictionary.get(symbol));
-        paddedBinary = convertTo16Bit(encodedBinary);
-        writeToFile(paddedBinary, binaryOutPutStream);
+        writeCompressedFile(dictionary, encodedBinary, paddedBinary, s, binaryOutPutStream);
         System.out.println("The file : " + inputFile + " has been compressed");
     }
 
+    private void writeCompressedFile(Map<String, Integer> dictionary, String encodedBinary, String paddedBinary, String s, BitOutputStream binaryOutPutStream){
+        encodedBinary = Integer.toBinaryString(dictionary.get(s));
+        paddedBinary = convertTo16Bit(encodedBinary);
+        writeToFile(paddedBinary, binaryOutPutStream);
+    }
 
     /**
      * Méthode pour décompresser le fichier.
